@@ -39,3 +39,6 @@ pnpm-debug.log*
 .cache/
 .parcel-cache/
 .tmp/
+
+# Codex briefs (locais, não commitar)
+.claude/*.md
