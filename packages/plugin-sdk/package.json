@@ -1,0 +1,19 @@
+{
+  "name": "@fluxa/plugin-sdk",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Contrato de UI para plugins de etapa do Fluxa",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "echo 'no tests yet' && exit 0"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.4",
+    "typescript": "^5.7.2"
+  }
+}
