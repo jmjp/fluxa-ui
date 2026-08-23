@@ -96,6 +96,9 @@ importers:
 
   apps/agent-ui:
     dependencies:
+      '@fluxa/plugin-sdk':
+        specifier: workspace:*
+        version: link:../../packages/plugin-sdk
       '@fluxa/shared':
         specifier: workspace:*
         version: link:../../packages/shared

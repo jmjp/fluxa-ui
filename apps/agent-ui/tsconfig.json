@@ -1,18 +1,47 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "plugins": [{ "name": "next" }],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@fluxa/shared": ["../../packages/shared/src/index.ts"],
-      "@fluxa/shared/api": ["../../packages/shared/src/api/client.ts"],
-      "@fluxa/shared/types/*": ["../../packages/shared/src/types/*"],
-      "@fluxa/shared/*": ["../../packages/shared/src/*"],
-      "@fluxa/ui": ["../../packages/ui/src/index.ts"],
-      "@fluxa/ui/*": ["../../packages/ui/src/*"]
-    }
+      "@/*": [
+        "./src/*"
+      ],
+      "@fluxa/shared": [
+        "../../packages/shared/src/index.ts"
+      ],
+      "@fluxa/plugin-sdk": [
+        "../../packages/plugin-sdk/src/index.ts"
+      ],
+      "@fluxa/shared/api": [
+        "../../packages/shared/src/api/client.ts"
+      ],
+      "@fluxa/shared/types/*": [
+        "../../packages/shared/src/types/*"
+      ],
+      "@fluxa/shared/*": [
+        "../../packages/shared/src/*"
+      ],
+      "@fluxa/ui": [
+        "../../packages/ui/src/index.ts"
+      ],
+      "@fluxa/ui/*": [
+        "../../packages/ui/src/*"
+      ]
+    },
+    "allowJs": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
