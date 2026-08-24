@@ -63,9 +63,14 @@ WORKDIR /app/apps/${APP}
 
 # Usuario nao-root (uid alto pra evitar conflito com usuario node:alpine).
 RUN apk add --no-cache shadow && \
-    addgroup -g 10000 fluxa && adduser -D -G fluxa -u 10000 fluxa && chown -R fluxa:fluxa /app
+    addgroup -g 10000 fluxa && adduser -D -G fluxa -u 10000 fluxa && \
+    chown -R fluxa:fluxa /app
 USER fluxa
 
-EXPOSE 3000
+EXPOSE 9090
 
-CMD ["pnpm", "start"]
+# Usa o binario `next` direto do node_modules.
+# Em monorepos pnpm, o `next` real fica em /app/node_modules/.pnpm/node_modules/next/.
+# O `.next/` compilado tem require() relativo que resolve via path normal
+# do Node (sem precisar de pnpm em runtime).
+CMD ["sh", "-c", "exec node /app/node_modules/.pnpm/node_modules/next/dist/bin/next start -p ${PORT:-9090}"]
