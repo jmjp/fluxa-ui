@@ -6,6 +6,8 @@ import { Button, Input, Label } from '@fluxa/ui';
 import { AuthShell } from '@/components/auth-shell';
 import { authRequest } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 export default function RegisterPage() {
   const router = useRouter(); const [error, setError] = useState(''); const [pending, setPending] = useState(false);
   async function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); const form = new FormData(event.currentTarget); const name = String(form.get('name') ?? '').trim(); const email = String(form.get('email') ?? '').trim(); const password = String(form.get('password') ?? ''); const confirmation = String(form.get('confirmation') ?? ''); if (!name || !email || !password) { setError('Preencha todos os campos.'); return; } if (password.length < 8) { setError('Sua senha precisa ter ao menos 8 caracteres.'); return; } if (password !== confirmation) { setError('As senhas não coincidem.'); return; } setPending(true); setError(''); try { await authRequest('register', { name, email, password }); router.replace('/'); router.refresh(); } catch (cause) { setError(cause instanceof Error ? cause.message : 'Não foi possível criar a conta.'); } finally { setPending(false); } }

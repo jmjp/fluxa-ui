@@ -6,6 +6,10 @@ import { Button, Input, Label } from '@fluxa/ui';
 import { AuthShell } from '@/components/auth-shell';
 import { authRequest } from '@/lib/auth';
 
+// Forca render dinamico pra evitar cache estatico do Next que
+// serve versao antiga dos chunks apos rebuild.
+export const dynamic = 'force-dynamic';
+
 export default function LoginPage() {
   const router = useRouter(); const [error, setError] = useState(''); const [pending, setPending] = useState(false);
   async function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); const form = new FormData(event.currentTarget); const email = String(form.get('email') ?? '').trim(); const password = String(form.get('password') ?? ''); if (!email || !password) { setError('Informe seu e-mail e senha.'); return; } setPending(true); setError(''); try { await authRequest('login', { email, password }); router.replace('/'); router.refresh(); } catch (cause) { setError(cause instanceof Error ? cause.message : 'Não foi possível entrar.'); } finally { setPending(false); } }
