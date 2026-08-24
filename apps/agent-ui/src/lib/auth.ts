@@ -13,8 +13,11 @@ interface AuthResponse {
   error?: { message?: string };
 }
 
-function apiURL() {
-  return (process.env.NEXT_PUBLIC_FLUXA_API_URL ?? 'http://127.0.0.1:8080').replace(/\/$/, '');
+// Usa o proxy interno do Next (apps/agent-ui/src/app/api/auth/[...path])
+// em vez de chamar o core direto. Evita CORS preflight no browser.
+// O proxy server-side faz o fetch no core, sem restricao de CORS.
+function authBase() {
+  return '/api/auth';
 }
 
 export function persistToken(token: string) {
@@ -32,7 +35,7 @@ export function getToken() {
 }
 
 export async function authRequest(path: 'login' | 'register', body: Record<string, string>) {
-  const response = await fetch(`${apiURL()}/api/v1/auth/${path}`, {
+  const response = await fetch(`${authBase()}/${path}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -46,7 +49,7 @@ export async function authRequest(path: 'login' | 'register', body: Record<strin
 }
 
 export async function getCurrentAgent(token: string) {
-  const response = await fetch(`${apiURL()}/api/v1/auth/me`, { headers: { Authorization: `Bearer ${token}` } });
+  const response = await fetch(`${authBase()}/me`, { headers: { Authorization: `Bearer ${token}` } });
   if (!response.ok) throw new Error('Sessão expirada.');
   const result = (await response.json()) as { data?: { agent: AuthAgent }; agent?: AuthAgent };
   return result.data?.agent ?? result.agent ?? null;
