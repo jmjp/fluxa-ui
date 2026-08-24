@@ -1,4 +1,5 @@
 import { createClient } from '@fluxa/shared/api';
+import { ErrorBoundary } from '@/components/error-boundary';
 import { Inbox } from '@/components/inbox';
 import type { Agent, Conversation } from '@fluxa/shared';
 
@@ -27,5 +28,9 @@ export default async function HomePage() {
     error = e instanceof Error ? e.message : 'falha ao carregar dados iniciais';
   }
 
-  return <Inbox initialConversations={conversations} initialAgents={agents} error={error} />;
+  return (
+    <ErrorBoundary>
+      <Inbox initialConversations={conversations} initialAgents={agents} error={error} />
+    </ErrorBoundary>
+  );
 }
