@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { FormEvent, useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { Button, Input, Label } from '@fluxa/ui';
 import { AuthShell } from '@/components/auth-shell';
 import { authRequest } from '@/lib/auth';
