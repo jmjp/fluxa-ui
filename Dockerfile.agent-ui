@@ -1,26 +1,30 @@
-# Build generico para apps Next.js do monorepo fluxa-ui.
-# Uso: docker build --build-arg APP=agent-ui -t fluxa-agent-ui .
-# ou:   docker build --build-arg APP=admin-ui -t fluxa-admin-ui .
-ARG APP=agent-ui
+# Dockerfile para Agent UI (Next.js + standalone output).
+# Roda em :9090, nao-root (uid 10000).
+#
+# Build:
+#   docker build -t fluxa-agent-ui -f Dockerfile.agent-ui .
+#
+# Rodar:
+#   docker run --rm -p 9090:9090 fluxa-agent-ui
+#   # ou com env custom:
+#   docker run --rm -p 9090:9090 -e PORT=9090 \
+#     -e NEXT_PUBLIC_FLUXA_API_URL=https://api.fluxa.example \
+#     fluxa-agent-ui
 
 # ── Deps ─────────────────────────────────────────────────────────────────────
 FROM node:22-alpine AS deps
-
-ARG APP
 
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json .npmrc ./
-COPY apps/${APP}/package.json ./apps/${APP}/
+COPY apps/agent-ui/package.json ./apps/agent-ui/
 COPY packages ./packages
 
 RUN pnpm install --frozen-lockfile
 
 # ── Build ────────────────────────────────────────────────────────────────────
 FROM node:22-alpine AS builder
-
-ARG APP
 
 ENV CI=true
 ENV PNPM_CONFIRM_MODULES_PURGE=false
@@ -32,30 +36,28 @@ COPY --from=deps /app/ ./
 COPY . .
 
 # Builda o app (next.config.mjs tem output: 'standalone' para Docker).
-RUN pnpm --filter @fluxa/${APP} build
+RUN pnpm --filter @fluxa/agent-ui build
 
 # ── Runtime ──────────────────────────────────────────────────────────────────
 FROM node:22-alpine AS runtime
 
-ARG APP
-
 ENV NODE_ENV=production
 ENV PORT=9090
 
-# O Next standalone gera apps/${APP}/.next/standalone com:
-#   - server.js (entrypoint)
-#   - apps/${APP}/server.js (alias)
-#   - apps/${APP}/.next/ (build output)
+# O Next standalone gera apps/agent-ui/.next/standalone com:
+#   - server.js (entrypoint principal)
+#   - apps/agent-ui/server.js (alias)
+#   - apps/agent-ui/.next/ (build output)
 #   - node_modules/ (deps copiadas planas, SEM symlinks!)
-#   - apps/${APP}/node_modules/ (deps workspace linkadas)
-#   - apps/${APP}/public/ (estaticos)
+#   - apps/agent-ui/node_modules/ (deps workspace linkadas)
+#   - apps/agent-ui/public/ (estaticos)
 WORKDIR /app
 
 # Copia o servidor standalone do Next (entrypoint principal).
-COPY --from=builder /app/apps/${APP}/.next/standalone ./
+COPY --from=builder /app/apps/agent-ui/.next/standalone ./
 # Copia o build output (.next) e os estaticos (public).
-COPY --from=builder /app/apps/${APP}/.next/static ./apps/${APP}/.next/static
-COPY --from=builder /app/apps/${APP}/public ./apps/${APP}/public
+COPY --from=builder /app/apps/agent-ui/.next/static ./apps/agent-ui/.next/static
+COPY --from=builder /app/apps/agent-ui/public ./apps/agent-ui/public
 
 # Usuario nao-root (uid alto pra evitar conflito com usuario node:alpine).
 RUN apk add --no-cache shadow && \
@@ -66,6 +68,4 @@ USER fluxa
 EXPOSE 9090
 
 # O server.js do Next standalone le a porta de $PORT (default 3000).
-# Usamos 9090 pra nao brigar com Dokploy UI.
-# NOTA: precisa ser shell form (CMD shell) pra ${APP} expandir.
-CMD node apps/${APP}/server.js
+CMD ["node", "apps/agent-ui/server.js"]
