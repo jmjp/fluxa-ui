@@ -2,8 +2,11 @@ import { PHASE_PRODUCTION_BUILD } from 'next/constants.js';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = (phase) => {
+  // Valida env vars em producao; em dev, usa fallback.
+  // Loga warning mas NAO bloqueia build — Dokploy precisa buildar
+  // mesmo sem env vars pra permitir orquestracao flexivel.
   if (phase === PHASE_PRODUCTION_BUILD && !process.env.NEXT_PUBLIC_FLUXA_API_URL) {
-    throw new Error('NEXT_PUBLIC_FLUXA_API_URL deve estar setada durante o build do Agent UI.');
+    console.warn('WARN: NEXT_PUBLIC_FLUXA_API_URL nao setada; Agent UI vai cair no fallback DEV (127.0.0.1:8080).');
   }
 
   return {
