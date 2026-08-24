@@ -5,3 +5,8 @@ export * from './components/badge';
 export * from './components/input';
 export * from './components/label';
 export * from './components/avatar';
+export * from './components/dialog';
+export * from './components/dropdown-menu';
+export * from './components/tabs';
+export * from './components/tooltip';
+export * from './components/toast';
