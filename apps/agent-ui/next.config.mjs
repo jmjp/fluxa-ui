@@ -11,7 +11,7 @@ const nextConfig = (phase) => {
 
   return {
     reactStrictMode: true,
-    transpilePackages: ['@fluxa/shared'],
+    transpilePackages: ['@fluxa/shared', '@fluxa/plugin-sdk'],
     // output: 'standalone' gera um bundle com TODAS as deps copiadas
     // de forma plana (sem symlinks), ideal pra Docker.
     output: 'standalone',

@@ -1,5 +1,13 @@
+import * as React from 'react';
+import { setReactBridge } from '@fluxa/plugin-sdk';
 import type { PluginPanel, UISlot } from '@fluxa/plugin-sdk';
 import type { PluginCapabilityUI } from '@fluxa/shared';
+
+// Publica o React do host para os bundles remotos. Os painéis de plugin são
+// compilados para `globalThis.__FLUXA_REACT__.createElement`, então usam a
+// MESMA instância de React do Agent UI (sem "multiple instances of React").
+// Deve rodar antes de qualquer `loadPluginPanels`.
+setReactBridge(React);
 
 const panels = new Map<string, PluginPanel>();
 let sequence = 0;

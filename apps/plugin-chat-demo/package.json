@@ -1,12 +1,12 @@
 {
-  "name": "@fluxa/plugin-cartoes-demo",
+  "name": "@fluxa/plugin-chat-demo",
   "version": "0.1.0",
   "private": true,
-  "description": "Plugin demonstrativo de cartões para o Agent UI",
+  "description": "Plugin demonstrativo de chat (conversa cliente × atendente) para o Agent UI",
   "scripts": {
-    "dev": "next dev -p 3002",
+    "dev": "next dev -p 3004",
     "build": "next build",
-    "build:bundle": "esbuild src/panels/index.ts --bundle --format=esm --outfile=public/cartoes.mjs --jsx=transform --jsx-factory=globalThis.__FLUXA_REACT__.createElement --jsx-fragment=globalThis.__FLUXA_REACT__.Fragment --log-level=warning",
+    "build:bundle": "esbuild src/panels/index.ts --bundle --format=esm --outfile=public/chat.mjs --jsx=transform --jsx-factory=globalThis.__FLUXA_REACT__.createElement --jsx-fragment=globalThis.__FLUXA_REACT__.Fragment --log-level=warning",
     "typecheck": "tsc --noEmit",
     "test": "echo 'no tests yet' && exit 0"
   },

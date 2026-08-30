@@ -1,12 +1,34 @@
-import { Check, Circle } from 'lucide-react';
+import { Icon } from './icon';
+import { WORKFLOW_STEPS } from '@/lib/ui';
 
-export function WorkflowBreadcrumb({ steps, currentStepId }: { steps: string[]; currentStepId?: string }) {
-  const active = Math.max(0, currentStepId ? steps.indexOf(currentStepId) : 0);
-  return <nav aria-label="Etapas do workflow" className="flex items-center gap-2 overflow-x-auto text-xs">
-    {steps.map((step, index) => <div key={step} className="flex items-center gap-2 whitespace-nowrap">
-      {index > 0 && <span className="text-muted-foreground">→</span>}
-      {index < active ? <Check className="size-3 text-emerald-600" /> : <Circle className="size-3" />}
-      <span className={index === active ? 'font-semibold text-primary' : 'text-muted-foreground'}>{step}</span>
-    </div>)}
-  </nav>;
+/** Breadcrumb de progresso do workflow (Triagem→Cartões→Fatura→Avaliação), estilo do protótipo. */
+export function WorkflowBreadcrumb({ currentStepId }: { currentStepId?: string }) {
+  const active = Math.max(0, WORKFLOW_STEPS.findIndex((step) => step.id === currentStepId));
+
+  return (
+    <nav aria-label="Etapas do workflow" className="flex items-center gap-1.5 overflow-x-auto whitespace-nowrap">
+      {WORKFLOW_STEPS.map((step, index) => (
+        <span key={step.id} className="flex items-center gap-1.5">
+          {index > 0 && <Icon name="chevron_right" className="text-[12px] text-surface-border" />}
+          {index === active ? (
+            <span className="flex items-center gap-1 rounded-md bg-accent-soft px-2 py-0.5 text-[12px] font-semibold text-primary">
+              <Icon name={step.icon} className="text-[14px]" />
+              {step.label}
+            </span>
+          ) : (
+            <span
+              className={
+                index < active
+                  ? 'flex items-center gap-1 text-[12px] text-on-surface'
+                  : 'flex items-center gap-1 text-[12px] text-outline'
+              }
+            >
+              <Icon name={index < active ? 'check_circle' : step.icon} className="text-[14px]" />
+              {step.label}
+            </span>
+          )}
+        </span>
+      ))}
+    </nav>
+  );
 }

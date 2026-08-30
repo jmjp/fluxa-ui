@@ -26,6 +26,8 @@ export interface Conversation {
   current_step_id?: string;
   queue_id?: string;
   queue_status: QueueStatus;
+  /** Agente que pegou/está atendendo a conversa (presente após pickup). */
+  assigned_agent_id?: string;
   created_at: Timestamp;
   updated_at: Timestamp;
 }

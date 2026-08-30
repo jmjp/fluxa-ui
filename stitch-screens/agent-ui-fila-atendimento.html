@@ -1,0 +1,380 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Fluxa - Queue Management</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#360f00",
+                        "surface-tint": "#0053db",
+                        "surface": "#f7f9fb",
+                        "on-primary": "#ffffff",
+                        "tertiary": "#943700",
+                        "on-primary-container": "#eeefff",
+                        "webchat": "#3B82F6",
+                        "background": "#f7f9fb",
+                        "on-surface-variant": "#434655",
+                        "outline": "#737686",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-fixed-dim": "#ffb596",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "on-secondary-fixed": "#0b1c30",
+                        "on-surface": "#191c1e",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "surface-container-low": "#f2f4f6",
+                        "online": "#22C55E",
+                        "primary": "#004ac6",
+                        "surface-container": "#eceef0",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#b4c5ff",
+                        "surface-container-high": "#e6e8ea",
+                        "surface-container-highest": "#e0e3e5",
+                        "error-container": "#ffdad6",
+                        "offline": "#94A3B8",
+                        "on-background": "#191c1e",
+                        "outline-variant": "#c3c6d7",
+                        "primary-container": "#2563eb",
+                        "on-primary-fixed": "#00174b",
+                        "surface-bright": "#f7f9fb",
+                        "surface-variant": "#e0e3e5",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "away": "#FACC15",
+                        "on-secondary-container": "#54647a",
+                        "warning": "#F59E0B",
+                        "inverse-on-surface": "#eff1f3",
+                        "primary-fixed": "#dbe1ff",
+                        "whatsapp": "#25D366",
+                        "inverse-surface": "#2d3133",
+                        "secondary-fixed": "#d3e4fe",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "on-tertiary-container": "#ffede6",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#505f76",
+                        "error": "#EF4444",
+                        "tertiary-container": "#bc4800",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#ffdbcd",
+                        "success": "#10B981",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "secondary-container": "#d0e1fb",
+                        "surface-border": "#E2E8F0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-page": "24px",
+                        "gutter": "16px",
+                        "unit": "4px",
+                        "sidebar-width": "320px",
+                        "node-gap": "40px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "code-sm": ["JetBrains Mono"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "code-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        
+        /* Custom scrollbar for table area */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: theme('colors.surface-dim');
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background-color: theme('colors.outline');
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md h-screen w-screen overflow-hidden flex">
+<!-- SideNavBar -->
+<aside class="bg-surface dark:bg-inverse-surface w-sidebar-width h-screen fixed left-0 top-0 border-r border-surface-border dark:border-outline-variant flex flex-col h-full p-4 z-20">
+<!-- Header -->
+<div class="flex items-center gap-3 mb-8 px-2">
+<div class="relative">
+<img alt="Agent Profile Picture" class="w-10 h-10 rounded-full object-cover border border-surface-border" data-alt="Professional corporate headshot of a young woman smiling warmly, wearing a neat business casual outfit. Soft, diffused lighting typical of a high-end office environment. Clean, minimalist white background to convey professionalism and trustworthiness." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDq8suIZZjy_vghcuqR57B41Duo0zYtJwJbZyuTmIDxxMFA9SgXts0V-MCW4yiAdfggPtiI7wMR-vUxf5XDNBamNwnbC4dXLx5JaAmj5NE9zODfyjRuWYeXBxiLw-h3yhu9ChrKHGYk63NsxhZ5hhl-UBwPa8i85rt8tSiNxberDsz5umX2roKpy0RZ67VsFzzAONvGrqEoo2e7aE1J_XUFz4jNGfetpAhDJTBFruqfcTU6MISz3zWaiw">
+<span class="absolute bottom-0 right-0 w-[10px] h-[10px] rounded-full bg-online border-2 border-on-primary"></span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Fluxa Agent</h2>
+<p class="font-label-md text-label-md text-on-surface-variant">Active Session</p>
+</div>
+</div>
+<!-- CTA -->
+<button class="mb-6 w-full py-2 px-4 bg-primary text-on-primary rounded-lg font-label-md text-label-md font-medium hover:bg-primary-container transition-colors shadow-sm flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span>
+            New Broadcast
+        </button>
+<!-- Navigation -->
+<nav class="flex-1 flex flex-col gap-1">
+<!-- Inbox (Inactive) -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-secondary-container dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors scale-95 duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="inbox">inbox</span>
+<span class="font-body-md text-body-md">Inbox</span>
+</a>
+<!-- Queue (Active) -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary dark:text-inverse-primary font-bold bg-secondary-container dark:bg-on-secondary-fixed-variant scale-95 duration-150" href="#">
+<span class="material-symbols-outlined text-[20px] fill" data-icon="format_list_bulleted">format_list_bulleted</span>
+<span class="font-body-md text-body-md">Queue</span>
+<span class="ml-auto bg-primary text-on-primary text-[10px] px-2 py-0.5 rounded-full font-bold">12</span>
+</a>
+<!-- Analytics (Inactive) -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-secondary-container dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors scale-95 duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="bar_chart">bar_chart</span>
+<span class="font-body-md text-body-md">Analytics</span>
+</a>
+<!-- Settings (Inactive) -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-secondary-container dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors scale-95 duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</nav>
+<!-- Footer Toggles -->
+<div class="mt-auto pt-4 border-t border-surface-border dark:border-outline-variant flex gap-2">
+<button class="flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-md bg-surface-container hover:bg-surface-container-high text-on-surface-variant text-[12px] font-medium transition-colors">
+<span class="material-symbols-outlined text-[16px] text-online" data-icon="check_circle">check_circle</span>
+                Online
+            </button>
+<button class="flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-md hover:bg-surface-container-high text-on-surface-variant text-[12px] font-medium transition-colors">
+<span class="material-symbols-outlined text-[16px]" data-icon="schedule">schedule</span>
+                Away
+            </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col ml-sidebar-width min-w-0">
+<!-- TopAppBar -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface border-b border-surface-border dark:border-outline-variant flex justify-between items-center w-full px-margin-page py-unit h-16 shrink-0 z-10 relative">
+<div class="flex items-center gap-8 h-full">
+<!-- Brand -->
+<h1 class="font-headline-md text-headline-md text-on-surface dark:text-inverse-on-surface font-bold tracking-tight">Fluxa</h1>
+<!-- Nav Links -->
+<nav class="hidden md:flex items-center gap-6 h-full">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary opacity-80 hover:opacity-100 transition-opacity font-label-md text-label-md uppercase tracking-wider h-full flex items-center" href="#">Current Chat</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary opacity-80 hover:opacity-100 transition-opacity font-label-md text-label-md uppercase tracking-wider h-full flex items-center" href="#">Thread History</a>
+</nav>
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-4">
+<!-- Secondary Action -->
+<button class="px-4 py-1.5 rounded-md border border-surface-border text-primary font-label-md text-label-md hover:bg-surface-container-lowest transition-colors hidden sm:block">
+                    Transfer
+                </button>
+<!-- Primary Action -->
+<button class="px-4 py-1.5 rounded-md bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container transition-colors hidden sm:block">
+                    Resolve
+                </button>
+<!-- Icon Actions -->
+<div class="flex items-center gap-2 border-l border-surface-border pl-4 ml-2">
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container-high text-on-surface-variant transition-colors opacity-80 hover:opacity-100">
+<span class="material-symbols-outlined text-[20px]" data-icon="person_search">person_search</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container-high text-on-surface-variant transition-colors opacity-80 hover:opacity-100">
+<span class="material-symbols-outlined text-[20px]" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Canvas Area -->
+<main class="flex-1 overflow-auto bg-background p-margin-page custom-scrollbar relative">
+<div class="max-w-6xl mx-auto w-full h-full flex flex-col">
+<!-- Header Section -->
+<div class="flex justify-between items-end mb-6">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-semibold mb-1 tracking-tight">Conversas na Fila</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Gestão de fila de espera em tempo real. Priorize os atendimentos.</p>
+</div>
+<!-- Filters/Actions -->
+<div class="flex items-center gap-3">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-outline">search</span>
+<input class="pl-9 pr-4 bg-surface-container-lowest border border-surface-border rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 w-64 transition-all py-2.5" placeholder="Buscar na fila..." type="text">
+</div>
+<button class="flex items-center gap-2 bg-surface-container-lowest border border-surface-border rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors py-2.5 px-4">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                            Filtros
+                        </button>
+</div>
+</div>
+<!-- Table Container (Glassmorphism inspired light card) -->
+<div class="flex-1 bg-surface-container-lowest border border-surface-border rounded-xl shadow-sm overflow-hidden flex flex-col">
+<!-- Table Header -->
+<div class="grid grid-cols-12 gap-4 px-6 py-4 border-b border-surface-border bg-surface-bright/50">
+<div class="col-span-3 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Cliente</div>
+<div class="col-span-2 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Canal</div>
+<div class="col-span-2 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Tempo de Espera</div>
+<div class="col-span-2 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Workflow Step</div>
+<div class="col-span-1 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Prioridade</div>
+<div class="col-span-2 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider text-right">Ação</div>
+</div>
+<!-- Table Body -->
+<div class="flex-1 overflow-auto custom-scrollbar">
+<!-- Row 1 -->
+<div class="grid grid-cols-12 gap-4 px-6 border-b border-surface-container items-center hover:bg-surface-bright transition-colors group py-6">
+<div class="col-span-3 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-label-md font-bold text-[14px]">
+                                    MR
+                                </div>
+<div class="flex flex-col">
+<span class="font-body-md font-medium text-on-surface">Maria Silva</span>
+<span class="font-label-md text-outline text-[11px]">+55 11 9999-8888</span>
+</div>
+</div>
+<div class="col-span-2 flex items-center">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-whatsapp/10 text-on-surface">
+<span class="material-symbols-outlined text-[14px] text-whatsapp">chat</span>
+<span class="font-label-md text-[11px]">WhatsApp</span>
+</div>
+</div>
+<div class="col-span-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-error">timer</span>
+<span class="font-code-sm text-error font-medium">12:45 min</span>
+</div>
+<div class="col-span-2 flex items-center">
+<span class="font-body-md text-on-surface-variant truncate">Validação de Conta</span>
+</div>
+<div class="col-span-1 flex items-center">
+<span class="inline-flex items-center justify-center w-6 h-6 rounded-md bg-error-container text-on-error-container font-code-sm font-bold">P1</span>
+</div>
+<div class="col-span-2 flex items-center justify-end">
+<button class="px-4 py-1.5 rounded-md bg-primary text-on-primary font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 focus:opacity-100 hover:bg-primary-container">
+                                    Pegar Conversa
+                                </button>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="grid grid-cols-12 gap-4 px-6 border-b border-surface-container items-center hover:bg-surface-bright transition-colors group py-6">
+<div class="col-span-3 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant flex items-center justify-center font-label-md font-bold text-[14px]">
+                                    JC
+                                </div>
+<div class="flex flex-col">
+<span class="font-body-md font-medium text-on-surface">João Costa</span>
+<span class="font-label-md text-outline text-[11px]">joao.c@email.com</span>
+</div>
+</div>
+<div class="col-span-2 flex items-center">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-webchat/10 text-on-surface">
+<span class="material-symbols-outlined text-[14px] text-webchat">forum</span>
+<span class="font-label-md text-[11px]">Webchat</span>
+</div>
+</div>
+<div class="col-span-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-warning">timer</span>
+<span class="font-code-sm text-warning font-medium">05:20 min</span>
+</div>
+<div class="col-span-2 flex items-center">
+<span class="font-body-md text-on-surface-variant truncate">Dúvida Faturamento</span>
+</div>
+<div class="col-span-1 flex items-center">
+<span class="inline-flex items-center justify-center w-6 h-6 rounded-md bg-surface-container-high text-on-surface-variant font-code-sm font-bold">P2</span>
+</div>
+<div class="col-span-2 flex items-center justify-end">
+<button class="px-4 py-1.5 rounded-md bg-primary text-on-primary font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 focus:opacity-100 hover:bg-primary-container">
+                                    Pegar Conversa
+                                </button>
+</div>
+</div>
+<!-- Row 3 -->
+<div class="grid grid-cols-12 gap-4 px-6 border-b border-surface-container items-center hover:bg-surface-bright transition-colors group py-6">
+<div class="col-span-3 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-fixed text-on-primary-fixed-variant flex items-center justify-center font-label-md font-bold text-[14px]">
+                                    AL
+                                </div>
+<div class="flex flex-col">
+<span class="font-body-md font-medium text-on-surface">Ana Luiza</span>
+<span class="font-label-md text-outline text-[11px]">+55 21 9888-7777</span>
+</div>
+</div>
+<div class="col-span-2 flex items-center">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-whatsapp/10 text-on-surface">
+<span class="material-symbols-outlined text-[14px] text-whatsapp">chat</span>
+<span class="font-label-md text-[11px]">WhatsApp</span>
+</div>
+</div>
+<div class="col-span-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-outline">timer</span>
+<span class="font-code-sm text-on-surface-variant font-medium">01:15 min</span>
+</div>
+<div class="col-span-2 flex items-center">
+<span class="font-body-md text-on-surface-variant truncate">Triagem Inicial</span>
+</div>
+<div class="col-span-1 flex items-center">
+<span class="inline-flex items-center justify-center w-6 h-6 rounded-md bg-surface-container-high text-on-surface-variant font-code-sm font-bold">P3</span>
+</div>
+<div class="col-span-2 flex items-center justify-end">
+<button class="px-4 py-1.5 rounded-md bg-primary text-on-primary font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 focus:opacity-100 hover:bg-primary-container">
+                                    Pegar Conversa
+                                </button>
+</div>
+</div>
+</div>
+<!-- Table Footer / Pagination Info -->
+<div class="px-6 py-3 border-t border-surface-border bg-surface-bright/30 flex justify-between items-center text-[12px] text-on-surface-variant">
+<span class="">Mostrando 3 de 12 conversas na fila</span>
+<div class="flex gap-1">
+<button class="w-6 h-6 flex items-center justify-center rounded hover:bg-surface-container disabled:opacity-50" disabled=""><span class="material-symbols-outlined text-[16px]">chevron_left</span></button>
+<button class="w-6 h-6 flex items-center justify-center rounded hover:bg-surface-container"><span class="material-symbols-outlined text-[16px]">chevron_right</span></button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+
+</body></html>
